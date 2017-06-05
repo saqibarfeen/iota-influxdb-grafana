@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 The StackLight InfluxDB-Grafana Plugin for Fuel
 ===============================================
 
@@ -87,3 +88,6 @@ Contributors
 * Patrick Petit <ppetit@mirantis.com>
 * Simon Pasquier <spasquier@mirantis.com>
 * Swann Croiset <scroiset@mirantis.com>
+=======
+# iota-influxdb-grafana
+>>>>>>> 1d41ad4a91981a083d1186b8710ff71c49459d7c
