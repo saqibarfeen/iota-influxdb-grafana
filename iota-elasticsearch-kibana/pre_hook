@@ -1,0 +1,68 @@
+#!/bin/bash
+rm -f  /etc/yum.repos.d/es-curator.repo
+rm -f  /etc/yum.repos.d/elasticsearch.repo
+set -eux
+
+ROOT="$(dirname "$(readlink -f "$0")")"
+MODULES_DIR="${ROOT}"/deployment_scripts/puppet/modules
+RPM_REPO="${ROOT}"/repositories/centos/
+DEB_REPO="${ROOT}"/repositories/ubuntu/
+
+function download_packages {
+    while [ $# -gt 0 ]; do
+        FILENAME=$(basename "$1")
+        EXT=${FILENAME##*.}
+        case ${EXT} in
+            deb) REPO=$DEB_REPO;;
+            rpm) REPO=$RPM_REPO;;
+        esac
+
+        rm -f "$REPO"/"$FILENAME"
+        wget -qO - "$1" > "$REPO"/"$FILENAME"
+        shift
+    done
+}
+
+
+echo "creating elasticsearch curator  repository"
+
+cat <<EOF | sudo tee /etc/yum.repos.d/es-curator.repo
+[curator-5]
+name=CentOS/RHEL 7 repository for Elasticsearch Curator 5.x packages
+baseurl=http://packages.elastic.co/curator/5/centos/7
+gpgcheck=0
+enabled=1
+EOF
+
+
+
+cat <<EOF | sudo tee /etc/yum.repos.d/elasticsearch.repo
+[elasticsearch-5.x]
+name=Elasticsearch repository for 5.x packages
+baseurl=https://artifacts.elastic.co/packages/5.x/yum
+gpgcheck=0
+enabled=1
+autorefresh=1
+type=rpm-md
+EOF
+
+cat <<EOF | sudo tee /etc/yum.repos.d/kibana.repo
+[kibana-5.x]
+name=Kibana repository for 5.x packages
+baseurl=https://artifacts.elastic.co/packages/5.x/yum
+gpgcheck=0
+enabled=1
+autorefresh=1
+type=rpm-md
+EOF
+
+
+echo "Installing all required packages"
+yum install -y elasticsearch
+yum install -y kibana
+yum install -y elasticsearch-curator 
+yum install -y java-1.8.0-openjdk
+
+
+echo "Installing required puppet modules"
+
