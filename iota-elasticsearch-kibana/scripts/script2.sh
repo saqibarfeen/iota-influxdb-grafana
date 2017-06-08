@@ -1,7 +1,7 @@
 WORK_DIR=/tmp/lma_logging
 mkdir -p $WORK_DIR
 pushd $WORK_DIR
-cd /root/workspace/fuel-plugin-elasticsearch-kibana/deployment_scripts/puppet/modules
+cd iota-influxdb-grafana/iota-elasticsearch-kibana/deployment_scripts/puppet/modules
 for module in $(ls .) 
 do
    pushd $module
