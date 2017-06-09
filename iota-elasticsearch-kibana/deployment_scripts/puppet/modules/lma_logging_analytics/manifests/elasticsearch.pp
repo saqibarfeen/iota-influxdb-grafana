@@ -12,6 +12,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+#  $script_inline = 'sandbox',
+#  $script_indexed = 'sandbox',
 class lma_logging_analytics::elasticsearch (
   $listen_address,
   $data_dir,
@@ -28,8 +30,6 @@ class lma_logging_analytics::elasticsearch (
   $heap_size = 1,
   $listen_port = 9200,
   $version = 'latest',
-  $script_inline = 'sandbox',
-  $script_indexed = 'sandbox',
 ){
 
   validate_bool($is_master)
@@ -50,37 +50,41 @@ class lma_logging_analytics::elasticsearch (
     datadir       => "${data_dir}/elasticsearch_data",
     init_defaults => {
         'MAX_LOCKED_MEMORY' => 'unlimited',
-        'ES_HEAP_SIZE'      => "${heap_size}g",
+#        'ES_HEAP_SIZE'      => "${heap_size}g",
         'LOG_DIR'           => $logs_dir,
+#saqib
+        'user'          => 'elasticsearch', 
+        'group'         => 'elasticsearch',
     },
     require       => File[$data_dir],
   }
 
   $config = {
-    'threadpool.bulk.queue_size'         => '1000',
-    'bootstrap.mlockall'                 => true,
+    'network.host'                      =>   "[${listen_address}, _local_]",
+    'thread_pool.bulk.queue_size'         => '1000',
+#    'bootstrap.memory_lock'                 => true,
     'http.cors.allow-origin'             => '/.*/',
     'http.cors.enabled'                  => true,
     'cluster.name'                       => $cluster_name,
     'path.logs'                          => $logs_dir,
     'node.name'                          => $node_name,
-    'node.master'                        => $is_master,
-    'node.data'                          => $is_data,
-    'discovery.zen.ping.multicast'       => {'enabled' => false},
-    'discovery.zen.ping.unicast.hosts'   => $nodes,
-    'discovery.zen.minimum_master_nodes' => $minimum_master_nodes,
+#    'node.master'                        => $is_master,
+#    'node.data'                          => $is_data,
+#    'discovery.zen.ping.multicast'       => {'enabled' => false},
+#    'discovery.zen.ping.unicast.hosts'   => $nodes,
+#    'discovery.zen.minimum_master_nodes' => $minimum_master_nodes,
     'gateway.recover_after_time'         => "${recover_after_time}m",
     'gateway.recover_after_nodes'        => $recover_after_nodes,
     'gateway.expected_nodes'             => size($nodes),
-    'http.bind_host'                     => $listen_address,
-    'transport.bind_host'                => $listen_address,
-    'transport.publish_host'             => $listen_address,
-    'script.inline'                      => $script_inline,
-    'script.indexed'                     => $script_indexed,
+#    'http.bind_host'                     => $listen_address,
+#    'transport.bind_host'                => $listen_address,
+#    'transport.publish_host'             => $listen_address,
+#    'script.inline'                      => $script_inline,
+#    'script.indexed'                     => $script_indexed,
   }
   # Start an instance of elasticsearch
   ::elasticsearch::instance { $instance_name:
-    logging_file => 'puppet:///modules/lma_logging_analytics/elasticsearch_logging.yaml',
+#    logging_file => 'puppet:///modules/lma_logging_analytics/elasticsearch_logging.yaml',
     config       => $config,
   }
 

@@ -58,10 +58,10 @@ EOF
 
 
 echo "Installing all required packages"
-yum install -y elasticsearch
-yum install -y kibana
-yum install -y elasticsearch-curator 
-yum install -y java-1.8.0-openjdk
+#yum install -y elasticsearch
+#yum install -y kibana
+#yum install -y elasticsearch-curator 
+#yum install -y java-1.8.0-openjdk
 
 
 echo "Installing required puppet modules"
