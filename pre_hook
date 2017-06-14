@@ -6,20 +6,6 @@ MODULES_DIR="${ROOT}"/deployment_scripts/puppet/modules
 RPM_REPO="${ROOT}"/repositories/centos/
 DEB_REPO="${ROOT}"/repositories/ubuntu/
 
-cat <<EOF | sudo tee /etc/yum.repos.d/grafana.repo
-[grafana]
-name=grafana
-baseurl=https://packagecloud.io/grafana/stable/el/6/\$basearch
-repo_gpgcheck=1
-enabled=1
-gpgcheck=1
-gpgkey=https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana
-sslverify=1
-sslcacert=/etc/pki/tls/certs/ca-bundle.crt
-EOF
-
-
-
 function download_packages {
     while [ $# -gt 0 ]; do
         FILENAME=$(basename "$1")
@@ -63,4 +49,6 @@ echo "Installing all required packages"
 yum install -y influxdb
 yum install -y grafana
 systemctl start grafana
+systemctl enable grafana
 systemctl start influxdb
+systemctl enable  influxdb
